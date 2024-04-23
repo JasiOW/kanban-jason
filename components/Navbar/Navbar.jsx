@@ -1,9 +1,12 @@
 import React from "react";
 import "./Navbar.css";
+import { useNavigate } from "react-router-dom";
 export default function Navbar(props) {
+  const nav = useNavigate();
   return (
+    
     <div className="navbar">
-      <h2>Kanban Board</h2>
+      <h2 onClick={() => nav("/")}>Kanban Board</h2>
       <div>
         <input
           type="checkbox"

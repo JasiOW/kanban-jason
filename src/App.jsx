@@ -167,6 +167,7 @@ import Editable from "../components/Editable/Editable";
 import useLocalStorage from "use-local-storage";
 import "../bootstrap.css";
 import { Home } from "react-feather";
+import  RoutedBoard  from "./RoutedBoard";
 
 // Create a context for theme
 const ThemeContext = createContext();
@@ -287,13 +288,9 @@ function App() {
       <ThemeContext.Provider value={{ theme, switchTheme }}> 
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="App">
-            <Routes>
-            <Route path="/Home" element={<Homepage />}/>
-            </Routes>
-              
-                
                 <Navbar />
-                <div className="app_outer">
+            <Routes>
+            <Route path="/" element={<div className="app_outer">
                   <div className="app_boards">
                     {data.map((item) => (
                       <Board
@@ -316,7 +313,12 @@ function App() {
                       placeholder={"Enter Board Title"}
                     />
                   </div>
-                </div>
+                </div>}/>
+            <Route path="/:colTitle"  element={<RoutedBoard data={data}/>}/>
+            </Routes>
+              
+                
+                
                 
               {/* Define other routes if needed */}
             

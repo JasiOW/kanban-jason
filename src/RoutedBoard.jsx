@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from "react";
-import Card from "../Card/Card";
-import "./Board.css";
+import Card from "../components/Card/Card";
+import "../components/Board/Board.css";
 import { MoreHorizontal } from "react-feather";
-import Editable from "../Editable/Editable";
-import Dropdown from "../Dropdown/Dropdown";
+import Editable from "../components/Editable/Editable";
+import Dropdown from "../components/Dropdown/Dropdown";
 import { Droppable } from "react-beautiful-dnd";
-import { useNavigate } from "react-router-dom";
-export default function Board(props) {
+import { useParams } from "react-router-dom";
+
+export default function RoutedBoard({data}) {
   const [show, setShow] = useState(false);
   const [dropdown, setDropdown] = useState(false);
-  const nav = useNavigate();
+
+
+  const { colTitle } = useParams();
+  let colpos;   
+  console.log(colTitle);
+  colpos = data.findIndex(
+    (column) => column.boardName.toLowerCase() === colTitle.toLowerCase()
+  );
+
   useEffect(() => {
     document.addEventListener("keypress", (e) => {
       if (e.code === "Enter") setShow(false);
@@ -20,7 +29,8 @@ export default function Board(props) {
       });
     };
   });
-
+console.log(data);
+console.log(colpos);
   return (
     <div className="board">
       <div className="board__top">
@@ -29,9 +39,9 @@ export default function Board(props) {
             <input
               className="title__input"
               type={"text"}
-              defaultValue={props.name}
+              defaultValue={data[colpos].boardName}
               onChange={(e) => {
-                props.setName(e.target.value, props.id);
+                data[colpos].setName(e.target.value, data[colpos].id);
               }}
             />
           </div>
@@ -43,8 +53,9 @@ export default function Board(props) {
               }}
               className="board__title"
             >
-              {props?.name || "Name of Board"}
-              <span className="total__cards">{props.card?.length}</span>
+              {data[colpos].boardName}  
+              {/* {props?.name || "Name of Board"} */}
+              <span className="total__cards">{data[colpos].card?.length}</span>
             </p>
           </div>
         )}
@@ -61,29 +72,28 @@ export default function Board(props) {
                 setDropdown(false);
               }}
             >
-              <p onClick={() => props.removeBoard(props.id)}>Delete Board</p>
-              <p onClick={() => nav(props.name)}>Route</p>
+              <p onClick={() => data[colpos].removeBoard(data[colpos].id)}>Delete Board</p>
             </Dropdown>
           )}
         </div>
       </div>
-      <Droppable droppableId={props.id.toString()}>
+      <Droppable droppableId={data[colpos].id.toString()}>
         {(provided) => (
           <div
             className="board__cards"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {props.card?.map((items, index) => (
+            {data[colpos].card?.map((items, index) => (
               <Card
-                bid={props.id}
+                bid={data[colpos].id}
                 id={items.id}
                 index={index}
                 key={items.id}
                 title={items.title}
                 tags={items.tags}
-                updateCard={props.updateCard}
-                removeCard={props.removeCard}
+                updateCard={data[colpos].updateCard}
+                removeCard={data[colpos].removeCard}
                 card={items}
               />
             ))}
@@ -96,7 +106,7 @@ export default function Board(props) {
           name={"Add Card"}
           btnName={"Add Card"}
           placeholder={"Enter Card Title"}
-          onSubmit={(value) => props.addCard(value, props.id)}
+          onSubmit={(value) => data[colpos].addCard(value, data[colpos].id)}
         />
       </div>
     </div>
